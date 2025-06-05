@@ -97,7 +97,7 @@ def measure_detection_performance(detections, labels, labels_valid, min_iou=0.5)
 
 
 # evaluate object detection performance based on all frames
-def compute_performance_stats(det_performance_all):
+def compute_performance_stats(det_performance_all, configs):
 
     # extract elements
     ious = []
@@ -110,15 +110,24 @@ def compute_performance_stats(det_performance_all):
     
     ####### ID_S4_EX3 START #######     
     #######    
-    print('student task ID_S4_EX3')
-
     ## step 1 : extract the total number of positives, true positives, false negatives and false positives
+    all_positives = 0
+    true_positives = 0
+    false_negatives = 0
+    false_postivies = 0
+    
+    print(det_performance_all)
+    for det in det_performance_all:
+        all_positives += det[2][0]
+        true_positives += det[2][1]
+        false_negatives += det[2][2]
+        false_postivies += det[2][3]
     
     ## step 2 : compute precision
-    precision = 0.0
+    precision = true_positives/all_positives
 
     ## step 3 : compute recall 
-    recall = 0.0
+    recall = true_positives/(true_positives+false_negatives)
 
     #######    
     ####### ID_S4_EX3 END #######     

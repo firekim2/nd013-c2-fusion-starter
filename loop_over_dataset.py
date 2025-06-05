@@ -59,7 +59,7 @@ data_filenames = {
 }
 
 data_filename = data_filenames[sequence]
-show_only_frames = [50, 51] # show only frames in interval for debugging
+show_only_frames = [50, 150] # show only frames in interval for debugging
 
 ## Prepare Waymo Open Dataset file for loading
 data_fullpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'dataset', data_filename) # adjustable path in case this script is called from another working directory
