@@ -109,15 +109,22 @@ def bev_from_pcl(lidar_pcl, configs):
     # convert sensor coordinates to bev-map coordinates (center is bottom-middle)
     ####### ID_S2_EX1 START #######     
     #######
-    print("student task ID_S2_EX1")
-
+    
     ## step 1 :  compute bev-map discretization by dividing x-range by the bev-image height (see configs)
-
+    
+    def lerp_int(arr, range_from, range_to):
+        new_arr = np.int_(np.floor((arr - range_from[0]) / (range_from[1] - range_from[0]) * (range_to[1] - range_to[0]) + range_to[0])) 
+        return new_arr    
+    
     ## step 2 : create a copy of the lidar pcl and transform all metrix x-coordinates into bev-image coordinates    
-
+    pcl_cp = np.copy(lidar_pcl)
+    new_X = lerp_int(pcl_cp[:,0], configs.lim_x, [0, configs.bev_height])
+    pcl_cp[:, 0] = new_X
     # step 3 : perform the same operation as in step 2 for the y-coordinates but make sure that no negative bev-coordinates occur
-
+    new_Y = lerp_int(pcl_cp[:,1], configs.lim_y, [0, configs.bev_width])
+    pcl_cp[:, 1] = new_Y
     # step 4 : visualize point-cloud using the function show_pcl from a previous task
+    show_pcl(pcl_cp)
     
     #######
     ####### ID_S2_EX1 END #######     
