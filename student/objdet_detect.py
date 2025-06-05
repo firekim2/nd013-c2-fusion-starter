@@ -63,9 +63,9 @@ def load_configs_model(model_name='darknet', configs=None):
         configs.model_path = os.path.join(parent_path, 'tools', 'objdet_models', 'resnet')
         configs.pretrained_filename = os.path.join(configs.model_path, 'pretrained', 'fpn_resnet_18_epoch_300.pth')
         configs.arch = 'fpn_resnet'
+        configs.num_layers = 18
         configs.pin_memory = True
         configs.conf_thresh = 0.5
-        configs.peak_thresh = 0.2
         configs.input_size = 608
         configs.hm_size = (152, 152)
         configs.batch_size = 1
@@ -146,8 +146,9 @@ def create_model(configs):
         
         ####### ID_S3_EX1-4 START #######     
         #######
-        print("student task ID_S3_EX1-4")
-
+        num_layers = configs.num_layers
+        model = fpn_resnet.get_pose_net(num_layers=num_layers, heads=configs.heads, head_conv=configs.head_conv,
+                    imagenet_pretrained=configs.imagenet_pretrained)
         #######
         ####### ID_S3_EX1-4 END #######     
     
@@ -195,8 +196,12 @@ def detect_objects(input_bev_maps, model, configs):
             
             ####### ID_S3_EX1-5 START #######     
             #######
-            print("student task ID_S3_EX1-5")
-
+            outputs['hm_cen'] = torch.clamp(outputs['hm_cen'].sigmoid_(), min=1e-4, max = 1 - 1e-4)
+            outputs['cen_offset'] = torch.clamp(outputs['cen_offset'].sigmoid_(), min=1e-4, max = 1 - 1e-4)
+            detections = decode(outputs['hm_cen'], outputs['cen_offset'], outputs['direction'], outputs['z_coor'],
+                        outputs['dim'], K=configs.K)
+            detections = detections.cpu().numpy().astype(np.float32)
+            detections = post_processing(detections, configs)
             #######
             ####### ID_S3_EX1-5 END #######     
 
