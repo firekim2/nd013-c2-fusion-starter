@@ -38,6 +38,7 @@ def measure_detection_performance(detections, labels, labels_valid, min_iou=0.5)
     true_positives = 0 # no. of correctly detected objects
     center_devs = []
     ious = []
+
     for label, valid in zip(labels, labels_valid):
         matches_lab_det = []
         if valid: # exclude all labels from statistics which are not considered valid
@@ -46,20 +47,26 @@ def measure_detection_performance(detections, labels, labels_valid, min_iou=0.5)
 
             ####### ID_S4_EX1 START #######     
             #######
-            print("student task ID_S4_EX1 ")
-
-            ## step 1 : extract the four corners of the current label bounding-box
             
+            ## step 1 : extract the four corners of the current label bounding-box
+            box = label.box
+            corners = tools.compute_box_corners(box.center_x, box.center_y, box.width, box.length, box.heading)
             ## step 2 : loop over all detected objects
-
+            gt_poly = Polygon(corners)
+            for det in detections:
                 ## step 3 : extract the four corners of the current detection
-                
+                _, x, y, z, h, w, l, yaw = det
+                det_corners = tools.compute_box_corners(x, y, w, l, yaw)
+                det_poly = Polygon(det_corners)
                 ## step 4 : computer the center distance between label and detection bounding-box in x, y, and z
-                
+                dist = [(box.center_x - x), (box.center_y - y),  (box.center_z - z)]
                 ## step 5 : compute the intersection over union (IOU) between label and detection bounding-box
-                
+                intersection = Polygon.intersection(gt_poly, det_poly).area
+                iou = intersection / (gt_poly.area + det_poly.area - intersection)
                 ## step 6 : if IOU exceeds min_iou threshold, store [iou,dist_x, dist_y, dist_z] in matches_lab_det and increase the TP count
                 
+                if iou > min_iou:
+                    matches_lab_det.append([iou, *dist])
             #######
             ####### ID_S4_EX1 END #######     
             
@@ -68,7 +75,6 @@ def measure_detection_performance(detections, labels, labels_valid, min_iou=0.5)
             best_match = max(matches_lab_det,key=itemgetter(1)) # retrieve entry with max iou in case of multiple candidates   
             ious.append(best_match[0])
             center_devs.append(best_match[1:])
-
 
     ####### ID_S4_EX2 START #######     
     #######

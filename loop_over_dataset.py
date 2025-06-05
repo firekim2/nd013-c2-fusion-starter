@@ -48,7 +48,7 @@ import misc.params as params
  
 ##################
 ## Set parameters and perform initializations
-model = 'fpn_resnet'
+model = 'darknet'
 sequence = "1"
 
 ## Select Waymo Open Dataset file and frame numbers
@@ -85,10 +85,9 @@ camera = None # init camera sensor object
 np.random.seed(10) # make random values predictable
 
 ## Selective execution and visualization
-exec_data = ['pcl_from_rangeimage', 'load_image']
-exec_detection = ['bev_from_pcl', 'detect_objects'] # options are 'bev_from_pcl', 'detect_objects', 'validate_object_labels', 'measure_detection_performance'; options not in the list will be loaded from file
+exec_detection = ['bev_from_pcl', 'detect_objects', 'validate_object_labels', 'measure_detection_performance'] # options are 'bev_from_pcl', 'detect_objects', 'validate_object_labels', 'measure_detection_performance'; options not in the list will be loaded from file
 exec_tracking = [] # options are 'perform_tracking'
-exec_visualization = ['show_objects_in_bev_labels_in_camera'] # options are 'show_range_image', 'show_bev', 'show_pcl', 'show_labels_in_image', 'show_objects_and_labels_in_bev', 'show_objects_in_bev_labels_in_camera', 'show_tracks', 'show_detection_performance', 'make_tracking_movie'
+exec_visualization = ['show_detection_performance'] # options are 'show_range_image', 'show_bev', 'show_pcl', 'show_labels_in_image', 'show_objects_and_labels_in_bev', 'show_objects_in_bev_labels_in_camera', 'show_tracks', 'show_detection_performance', 'make_tracking_movie'
 exec_list = make_exec_list(exec_detection, exec_tracking, exec_visualization)
 vis_pause_time = 0 # set pause time between frames in ms (0 = stop between frames until key is pressed)
 
