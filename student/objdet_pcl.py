@@ -117,14 +117,14 @@ def bev_from_pcl(lidar_pcl, configs):
         return new_arr    
     
     ## step 2 : create a copy of the lidar pcl and transform all metrix x-coordinates into bev-image coordinates    
-    pcl_cp = np.copy(lidar_pcl)
-    new_X = lerp_int(pcl_cp[:,0], configs.lim_x, [0, configs.bev_height])
-    pcl_cp[:, 0] = new_X
+    lidar_pcl_cpy = np.copy(lidar_pcl)
+    new_X = lerp_int(lidar_pcl_cpy[:,0], configs.lim_x, [0, configs.bev_height])
+    lidar_pcl_cpy[:, 0] = new_X
     # step 3 : perform the same operation as in step 2 for the y-coordinates but make sure that no negative bev-coordinates occur
-    new_Y = lerp_int(pcl_cp[:,1], configs.lim_y, [0, configs.bev_width])
-    pcl_cp[:, 1] = new_Y
+    new_Y = lerp_int(lidar_pcl_cpy[:,1], configs.lim_y, [0, configs.bev_width])
+    lidar_pcl_cpy[:, 1] = new_Y
     # step 4 : visualize point-cloud using the function show_pcl from a previous task
-    show_pcl(pcl_cp)
+    show_pcl(lidar_pcl_cpy)
     
     #######
     ####### ID_S2_EX1 END #######     
@@ -140,8 +140,8 @@ def bev_from_pcl(lidar_pcl, configs):
 
     # step 2 : re-arrange elements in lidar_pcl_cpy by sorting first by x, then y, then -z (use numpy.lexsort)
 
-    idx_intensity = np.lexsort((-pcl_cp[:, 3], pcl_cp[:, 1], pcl_cp[:, 0]))
-    pcl_intensity_sorted = pcl_cp[idx_intensity]
+    idx_intensity = np.lexsort((-lidar_pcl_cpy[:, 3], lidar_pcl_cpy[:, 1], lidar_pcl_cpy[:, 0]))
+    pcl_intensity_sorted = lidar_pcl_cpy[idx_intensity]
 
     ## step 3 : extract all points with identical x and y such that only the top-most z-coordinate is kept (use numpy.unique)
     ##          also, store the number of points per x,y-cell in a variable named "counts" for use in the next task
@@ -153,9 +153,9 @@ def bev_from_pcl(lidar_pcl, configs):
     ##          make sure that the intensity is scaled in such a way that objects of interest (e.g. vehicles) are clearly visible    
     ##          also, make sure that the influence of outliers is mitigated by normalizing intensity on the difference between the max. and min. value within the point cloud
 
-    pcl_cp[pcl_cp[:, 3] > 1.0, 3] = 1.0
-    p1 = np.percentile(pcl_cp[:, 3], 1)
-    p99 = np.percentile(pcl_cp[:, 3], 99)
+    lidar_pcl_cpy[lidar_pcl_cpy[:, 3] > 1.0, 3] = 1.0
+    p1 = np.percentile(lidar_pcl_cpy[:, 3], 1)
+    p99 = np.percentile(lidar_pcl_cpy[:, 3], 99)
 
     intensity_map[np.int_(pcl_intensity_unique[:, 0]), np.int_(pcl_intensity_unique[:, 1])] = pcl_intensity_unique[:, 3] / (p99 - p1) * 256
 
@@ -184,12 +184,12 @@ def bev_from_pcl(lidar_pcl, configs):
     ##          make sure that each entry is normalized on the difference between the upper and lower height defined in the config file
     ##          use the lidar_pcl_top data structure from the previous task to access the pixels of the height_map
     
-    idx_height = np.lexsort((-pcl_cp[:, 2], pcl_cp[:, 1], pcl_cp[:, 0]))
-    pcl_height_sorted = pcl_cp[idx_height]
+    idx_height = np.lexsort((-lidar_pcl_cpy[:, 2], lidar_pcl_cpy[:, 1], lidar_pcl_cpy[:, 0]))
+    pcl_height_sorted = lidar_pcl_cpy[idx_height]
     _, idx_height_unique = np.unique(pcl_height_sorted[:, 0:2], axis = 0, return_index=True)
     
-    pcl_height_unique = pcl_height_sorted[idx_height_unique]
-    height_map[np.int_(pcl_height_unique[:, 0]), np.int_(pcl_height_unique[:, 1])] = pcl_height_unique[:, 2] / (configs.lim_z[1] - configs.lim_z[0]) * 256
+    lidar_pcl_top = pcl_height_sorted[idx_height_unique]
+    height_map[np.int_(lidar_pcl_top[:, 0]), np.int_(lidar_pcl_top[:, 1])] = lidar_pcl_top[:, 2] / (configs.lim_z[1] - configs.lim_z[0]) * 256
     ## step 3 : temporarily visualize the intensity map using OpenCV to make sure that vehicles separate well from the background
     
     # img_height = height_map
@@ -202,12 +202,6 @@ def bev_from_pcl(lidar_pcl, configs):
     
     #######
     ####### ID_S2_EX3 END #######       
-
-    # TODO remove after implementing all of the above steps
-    lidar_pcl_cpy = []
-    lidar_pcl_top = []
-    height_map = []
-    intensity_map = []
 
     # Compute density layer of the BEV map
     density_map = np.zeros((configs.bev_height + 1, configs.bev_width + 1))
