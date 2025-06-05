@@ -35,7 +35,7 @@ import misc.objdet_tools as tools
 def measure_detection_performance(detections, labels, labels_valid, min_iou=0.5):
     
      # find best detection for each valid label 
-    true_positives = 0 # no. of correctly detected objects
+    true_positives = 0
     center_devs = []
     ious = []
 
@@ -75,28 +75,24 @@ def measure_detection_performance(detections, labels, labels_valid, min_iou=0.5)
             best_match = max(matches_lab_det,key=itemgetter(1)) # retrieve entry with max iou in case of multiple candidates   
             ious.append(best_match[0])
             center_devs.append(best_match[1:])
-
     ####### ID_S4_EX2 START #######     
-    #######
-    print("student task ID_S4_EX2")
-    
+    #######    
     # compute positives and negatives for precision/recall
     
     ## step 1 : compute the total number of positives present in the scene
-    all_positives = 0
-
+    all_positives = len(detections)
+    true_positives = len(ious)
     ## step 2 : compute the number of false negatives
-    false_negatives = 0
-
+    false_negatives = len(labels_valid[labels_valid == True]) - true_positives
+    
     ## step 3 : compute the number of false positives
-    false_positives = 0
+    false_positives = all_positives - true_positives
     
     #######
     ####### ID_S4_EX2 END #######     
     
     pos_negs = [all_positives, true_positives, false_negatives, false_positives]
     det_performance = [ious, center_devs, pos_negs]
-    
     return det_performance
 
 
