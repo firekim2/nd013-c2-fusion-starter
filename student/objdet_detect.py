@@ -114,7 +114,7 @@ def load_configs(model_name='fpn_resnet', configs=None):
 
     # birds-eye view (bev) parameters
     configs.lim_x = [0, 50] # detection range in m
-    configs.lim_y = [-5, 10]
+    configs.lim_y = [-5, 15]
     configs.lim_z = [-1, 3]
     configs.lim_r = [0, 1.0] # reflected lidar intensity
     configs.bev_width = 608  # pixel resolution of bev image
