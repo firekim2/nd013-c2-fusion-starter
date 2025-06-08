@@ -49,6 +49,11 @@ Learnt very effective method to apply Kalman filter / object tracking system wit
 ### Benefit
 Lidar is stable already, but if you consider weather condition, price, and 2d object like traffic light, camera is also required. If we can improve our data with camera data also, we need camera device anyway so there is no reason to not using it.
 
+### Challenges 
+- Performance : if you add more sensosrs into system, there will be more process power required into system. Need to find some compromise at somewhere mid.
+- Noise : Process noise can be different in different scenarios. Need to test more with variety of scenario for reducing the effect of it.
+- Physical Issue : each sensor has different FOV and different specification. Need to consider where to install with safety, visibility, and characteristic of each sensors.
+
 ### Future direction
 I want to learn how to apply 'pre-known road context' or 'localization' result into here.
 
