@@ -49,7 +49,7 @@ import misc.params as params
 ##################
 ## Set parameters and perform initializations
 model = 'fpn_resnet'
-sequence = "2"
+sequence = "1"
 
 ## Select Waymo Open Dataset file and frame numbers
 data_filenames = {
@@ -59,7 +59,7 @@ data_filenames = {
 }
 
 data_filename = data_filenames[sequence]
-show_only_frames = [65, 100] # show only frames in interval for debugging
+show_only_frames = [0, 200] # show only frames in interval for debugging
 
 ## Prepare Waymo Open Dataset file for loading
 data_fullpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'dataset', data_filename) # adjustable path in case this script is called from another working directory
