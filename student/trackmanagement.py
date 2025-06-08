@@ -45,7 +45,6 @@ class Track:
                 
         self.state = 'initialized'
         self.count = [False] * params.window
-        self.update_count(True)
         self.score = len(list(filter(lambda x: x == True, self.count))) / params.window
                
         # other track attributes
@@ -102,11 +101,10 @@ class Trackmanagement:
 
         # delete old tracks   
         for track in self.track_list:
-            if track.state == 'confirmed':
-                if track.score < params.delete_threshold \
-                        or track.P[0,0] > params.max_P \
-                        or track.P[1,1] > params.max_P:
-                    self.delete_track(track)
+            if track.state == 'confirmed' and track.score < params.delete_threshold:
+                self.delete_track(track)
+            if track.P[0,0] > params.max_P or track.P[1,1] > params.max_P:
+                self.delete_track(track)
             
         # initialize new track with unassigned measurement
         for j in unassigned_meas: 
@@ -130,5 +128,5 @@ class Trackmanagement:
         track.update_count(True)
         if track.score >= params.confirmed_threshold:
             track.state = "confirmed"
-        elif track.state == 'initialized':
+        else:
             track.state = "tentative"
